@@ -1,4 +1,4 @@
-# INDENG-242A-Group-Project
+# INDENG242A Group Project Outline
 Goal: comparative study of different ML methods in a specific area of the financial market
 Possible subgoal: find a more nuanced algorithm for arbitrage/making profits, tailored towards the specific kind of market/futures/options/stock.
 
