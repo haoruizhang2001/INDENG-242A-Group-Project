@@ -33,7 +33,7 @@ This notebook implements a data pipeline for predicting crude oil market movemen
 - **Frequency**: Daily
 - **Rationale**: Avoids COVID-19 market disruption while capturing recent market dynamics
 
-## Key Questions
+## Some Questions I was wondering about
 - How far back should training data extend? Post-2020 data avoids pandemic anomalies but reduces sample size.
 - Does adding more variables improve signal or introduce noise? Need to evaluate feature importance.
 
