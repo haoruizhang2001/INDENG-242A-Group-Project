@@ -6,7 +6,7 @@ The notebook is run locally on Arthur's computer, so if you would like to reprod
 Before running this notebook, ensure you have the following packages installed:
 
 ```bash
-pip install yfinance pandas numpy xlrd matplotlib seaborn requests
+%pip install yfinance pandas numpy xlrd matplotlib seaborn requests
 ```
 
 **Package List:**
