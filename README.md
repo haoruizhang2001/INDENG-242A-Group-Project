@@ -1,3 +1,5 @@
+<img width="2816" height="1536" alt="Gemini_Generated_Image_o732lso732lso732" src="https://github.com/user-attachments/assets/cda2fea7-a725-487b-a74f-51c8ac121e42" />
+
 # Meeting notes after Dec.5th
 
 - 3 Datasets: PCA, Lasso/Ridge, Original Dataset
