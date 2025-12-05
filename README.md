@@ -1,161 +1,97 @@
-<img width="2816" height="1536" alt="Gemini_Generated_Image_o732lso732lso732" src="https://github.com/user-attachments/assets/cda2fea7-a725-487b-a74f-51c8ac121e42" />
+# Baseline Models
 
-# Meeting notes after Dec.5th
+To begin with, we attempted several basic models simply based on our own understanding and reasonable conjectures about the financial market.
 
-- 3 Datasets: PCA, Lasso/Ridge, Original Dataset
-- Algrothims:
-	- Baseline: Linear Regression (without feature selection);
-	- Random Walk Model
+The **first part is a daily linear regression analysis**. 
 
- - Lasso regression
- - Random forest
- - AR(1)
- - ARIMA
+It's expected that we will show that blindly modeling daily price movements with a Linear Regression is noisy.
+
+While the **second part is a weekly analysis including a variety of random walks**. 
+
+It's mainly due to the fact that the dataset contains a series of weekly data denoting the demand, supply, and other fundamental aspects of crude oil. Thus, there is a fairly solid motive for us to assume the **great inertia (or autocorrelation in statistical terms) and time dependency of crude oil price**. In that way, this week's oil price is likely to depend on previous weeks' situations, simulating a random walk.
 
 ---
-# Meeting Notes - Dec. 4th
+# Findings based on the primary models
 
-11 a.m. Section Gathering
+This set of results is classic and carries **profound financial significance**.
 
-"If you can do the data pipeline plus one well-designed linear vs tree-based comparison with proper backtesting, you’ll already have a very strong project. Anything beyond that is a bonus."
+### Core Finding: High Market Efficiency (Long Live Random Walk King)
+Note that Model 2 (Random Walk) defeated all competitors with an RMSE of 2.5835.
 
-Everyone works on their own ideas:
-- Wish: PCA vs. linear/feature selection by hand
-- Monthly frequencies v.s. daily frequencies
-- Baseline model
-- Forest
-  - Boosting
-- ARIMA
-- XGBoost???
-- Factors (based on the financial knowledge)
+This validates the Efficient Market Hypothesis (EMH) within the weekly crude oil timeframe.
 
+It implies that the current week's price already encapsulates almost all available information.
 
-  
+Trying to beat "simple inertia" using publicly available EIA supply/demand data (which everyone sees) is incredibly difficult. And this suggests that crude oil prices at this frequency are primarily driven by Trend and Momentum, rather than weekly micro-changes in inventory.
 
+### The "Spurious Regression" Trap
+Model 1 (Linear Regression) collapsed with a massive RMSE of 34.58.
 
-# INDENG242A Group Project Outline
-Goal: comparative study of different ML methods in a specific area of the financial market
+This is, of course, a textbook level of Overfitting.
 
-Possible subgoal: find a more nuanced algorithm for arbitrage/making profits, tailored towards the specific kind of market/futures/options/stock.
-
-Discussion we want to touch upon:
-1. Effectiveness of different ML methods
-2. Rethinking the performance metrics
-  	- Conjecture: high accuracy does not directly translate to good returns in portfolios sometimes
-3. Connect the model's findings with mathematical/financial principles.
-	- Conjecture: We are likely to discuss some rules derived by Boosting/RF and see how they can be connected with math principles. When some variables are extremely high, the previous criteria become ineffective.
-4. Application insights: data collection time v.s. quality
-   	- One interesting thing to do is to check if the low-quality/less precise/less sensitive data could bring up a fairly similar model with one based on a high-quality model.
+When one throws dozens of fundamental indicators (Inventory, Production, etc.) directly into a linear model to predict Absolute Price, the model forces itself to memorize every bit of noise in the training set.
 
 
-## Markets Suggested
-- Oil Market (Crude oil CL=F)
-	- Structural, systematic, easy-to-understand, highly connected with macro-economy
-- Crypto
-	- Full of data sources, subject to sentiment and many other variables one could call
-- Beans/Corn (ZS, ZC)
-	- Extremely seasonal, can discuss stationarity/seasonality stuff
+Once applied to the testing set (unseen data), these memorized relationships completely break down.
 
-## Data sources
-- yfiance
-- quantnet
-- Binance API
-- Alphavantage
+### Time Value: Recency Bias (Newer is Better)
+Model 3 (Smoothed RW) performed significantly worse (RMSE 2.80) than Model 2 (2.58).
 
+Therefore, **smoothing (averaging) actually destroyed value**.
 
-### Tentative Research Plan
+By averaging the last two weeks, one artificially introduced Lag.
 
-#### Abstract
-This study aims to construct and compare systematic trading strategies for WTI Crude Oil (CL) futures. The research investigates whether non-linear machine learning models (XGBoost, LSTM) can generate superior risk-adjusted returns (Sharpe Ratio) compared to traditional linear benchmarks (Lasso Regression) by effectively integrating Term Structure signals with fundamental oil-market specific variables (Crack Spreads, Inventory Data, Macro-economic data).
+In a volatile market like crude oil, "The Latest Information" (Current Price) is far more valuable than "Old Information" (Last Week's Price). While smoothing reduces noise, it also dilutes critical trend signals.
+
+### Model 4's Convergence 
+Model 4 (Calibrated RW) produced an RMSE (2.59) almost identical to Model 2 (2.58), differing by only 0.01.
+
+It proves that Lasso worked exactly as intended—it likely compressed the coefficients of the vast majority of your fundamental features to zero.
 
 
-#### Target variables
+The tiny 0.01 difference suggests that Lasso kept one or two very weak features that turned out to be noise in the test set, slightly dragging down performance.
 
-Essentially, we believe the majority of methods learnt in the course could be somewhat applied. As long as the predicted probabilities could be generated, the signals of buying/selling/holding could be set up through a certain numeric threshold, and furthermore, one could design nuanced strategies (Position sizing corresponding to the probabilities, for example)
+---
 
-Therefore, we will try abusing the models to produce a binary variable such that
-$Y_{t} = 1$ if $\text{Return}_{t+5} > 0$ else $0$
+# 1. Linear Regression (Baseline ML) 
+
+This model attempts to predict the next day/week's price directly using a weighted sum of all available features (Inventory, Production, RSI, etc.) from the current day/week.
+
+$$\hat{P}_{t+1} = \beta_0 + \beta_1 X_{1,t} + \beta_2 X_{2,t} + \dots + \beta_n X_{n,t} + \epsilon$$
+
+Where:
+
+$\hat{P}_{t+1}$: Predicted Price for next day/week.
+
+$X_{i,t}$: Value of feature $i$ (e.g., Inventory) at current day/week $t$.
+
+$\beta_i$: Learned coefficients.
+
+# 2. Random Walk (Naive Baseline)
+
+This model assumes the market is efficient and the best predictor for next week's price is simply this week's price.$$\hat{P}_{t+1} = P_t$$
+
+Where:
+
+$P_t$: Actual Price at current week $t$.
+
+# 3. Smoothed Random Walk (2-Week Average)
+
+This model assumes the current price might contain noise, so it uses the average of the last two weeks as the prediction anchor.$$\hat{P}_{t+1} = \frac{P_t + P_{t-1}}{2}$$
+
+# 4.  Supply/Demand Calibrated Random Walk (Augmented)
+
+This model uses the Random Walk as a base ($P_t$) but "calibrates" it by predicting the percentage return ($\hat{r}_{t+1}$) based on changes in supply and demand fundamentals.$$\hat{r}_{t+1} = \alpha + \sum_{i=1}^{k} \lambda_i \Delta F_{i,t}$$
+
+$$\hat{P}_{t+1} = P_t \times (1 + \hat{r}_{t+1})$$
+
+Where:
 
 
-#### Models
-- Benchmark Model: Represents the traditional econometric approach, assuming linear relationships between fundamental factors and oil returns.
-  	- Simple linear regression
-  	- Lasso Regression.
-  	- ARIMA
-  	- Logistic regression
-- Funny Model: Attempts to find a high-dimensional space to separate the time period when going upwards and downwards.
-  	- KNN
-  	- SVM
-- Main Model (Tree-Based): Chosen for its ability to capture regime-switching behavior (e.g., "Inventory data matters more when Volatility is low").
-  	- Random Forest
-  	- Boosting (XGBoost specifically).
-- Challenger Model (We expect them to be more powerful, plus they have cool names):  (MLP?). Depends on our workload.
-  	- Neural Network
-  	- MLP
-	- LSTM
+$\hat{r}_{t+1}$: Predicted return for next week.
 
 
+$\Delta F_{i,t}$: Percentage change in fundamental factor $i$ (e.g., % change in Inventory).
 
-#### Features
-There will be 4 big parts of features:
-1. Term Structure / Carry
-   - Roll yield
-   - Curve slope
-   - Curve curvature
-2. Oil fundamentals
-   - Crack spread ($P_{Gasoline} - P_{crude}$)
-   - Inventory Change (EIA Crude Oil Stocks Change, need forward fill)
-   - Open interest change ($\frac{OI_t - OI_{t-1}}{OI_{t-1}}$)
-3. Technical & Momentum
-   	- Time Series Momentum
-   	- Vol_Adjusted_Mom$\frac{\text{Return}}{\text{Volatility}}$
-   	- RSI
-   	- Basis Momentum
-4. Macro & Sentiment
-   	- DXY Return
-   	- US10Y
-   	- OVX
+$\lambda_i$: Coefficients learned via Lasso Regularization (sparse selection).
 
-There are definitely a lot more interesting and arguably reasonable data sources, but we also have to be wise about the price–performance ratio; if they are highly correlated with other variables, we definitely don't want to spend days wrangling data.
-
-While that also leads to another interesting question: would a proxy variable (correlating with a lot) outperform a more accurate/arguably more powerful, specific variable in the model?
-
-#### Backtesting
-- Walk-Forward Validation: Rolling window training (e.g., 3-year train, 1-year test) to prevent look-ahead bias.
-- Scenario analysis: Carefully select bullish/bearish time periods to prevent feeding models with overly optimistic/pessimistic information. 
-- Transaction Costs: Simulating realistic slippage and commission fees typical for retail/institutional futures trading.
-
-#### Performance metrics
-The model is not only about predictions, but it's more about profiting. That leads to 2 dimensions of metrics we have to check:
-1. Statistical / ML Metrics
-- Precision
-  	- Primary indicator: one doesn't have to capture every increase, but definitely needs to make a good shot when making the decisions. 
-- Accuracy
-  - Be careful about that, and we have to set a Benchmark Accuracy. If the stock market is in a bull scenario, blindly guessing a skyrocketing price will generate good accuracy.
-- Log-Loss
-  - High accuracy but low confidence is still not good. 
-- AUC-ROC
-2. Financial / Strategy Metrics
-- Risk-Adjusted Returns
-  - Sharpe Ratio
-  - Sortino Ratio
-  - Calmar Ratio
-- Absolute Risk
-  - Max Drawdown
-  - Volatility
-- Execution Metrics (advanced)
-  - Win Rate vs. Profit/Loss Ratio
-  - Turnover Rate
-
-#### Basic To-Do List
-
-1. Settle the market (the current structure of the tentative plan can be transferred into any market).
-2. Settle the time period (Different datasets have different units of time, and this may affect the quality of training)
-3. Collecting data 
-- Time-consuming work (each guy focuses on different stuff)
-- Need to be careful about the units of time
-- Could look up some interesting variables/ design some interesting variables (say, network variable across different sections of supply chain)
-4. Literature review on the application of ML to financial markets.
-  - Performance metrics?
-  - Which model works best in what situations?
-  - How to really apply them? How do they form the execution decisions, really?
