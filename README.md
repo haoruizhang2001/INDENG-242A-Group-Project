@@ -1,6 +1,8 @@
 # WARNING 
 The notebook is run locally on Arthur's computer, so if you would like to reproduce the process, please change the file paths to the EIA files
 
+Also, the shortened dataset has variables with abbreviated names. Please check the original dataset if encountering any difficulties in understanding. 
+
 # Required Packages
 
 Before running this notebook, ensure you have the following packages installed:
