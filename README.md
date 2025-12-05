@@ -1,3 +1,16 @@
+# Meeting notes after Dec.5th
+
+- 3 Datasets: PCA, Lasso/Ridge, Original Dataset
+- Algrothims:
+	- Baseline: Linear Regression (without feature selection);
+	- Random Walk Model
+
+ - Lasso regression
+ - Random forest
+ - AR(1)
+ - ARIMA
+
+---
 # Meeting Notes - Dec. 4th
 
 11 a.m. Section Gathering
