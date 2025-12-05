@@ -7,6 +7,7 @@
 Everyone works on their own ideas:
 - Wish: PCA vs. linear/feature selection by hand
 - Monthly frequencies v.s. daily frequencies
+- Baseline model
 - Forest
   - Boosting
 - ARIMA
