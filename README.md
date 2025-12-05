@@ -11,7 +11,7 @@ Everyone works on their own ideas:
 - Forest
   - Boosting
 - ARIMA
-- XGBoost
+- XGBoost???
 - Factors (based on the financial knowledge)
 
 
