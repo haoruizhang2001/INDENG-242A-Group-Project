@@ -1,3 +1,22 @@
+# Meeting Notes - Dec. 4th
+
+11 a.m. Section Gathering
+
+"If you can do the data pipeline plus one well-designed linear vs tree-based comparison with proper backtesting, you’ll already have a very strong project. Anything beyond that is a bonus."
+
+Everyone works on their own ideas:
+- Wish: PCA vs. linear/feature selection by hand
+- 
+- Forest
+  - Boosting
+- ARIMA
+- XGBoost
+- Factors (based on the financial knowledge)
+
+
+  
+
+
 # INDENG242A Group Project Outline
 Goal: comparative study of different ML methods in a specific area of the financial market
 
