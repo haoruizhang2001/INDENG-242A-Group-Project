@@ -1,16 +1,20 @@
-<img width="2816" height="1536" alt="Gemini_Generated_Image_o732lso732lso732" src="https://github.com/user-attachments/assets/cda2fea7-a725-487b-a74f-51c8ac121e42" />
 
-# Meeting notes after Dec.5th
+<img width="352" height="188" alt="Gemini_Generated_Image_8ik9ws8ik9ws8ik9" src="https://github.com/user-attachments/assets/4a3bd7de-2753-4da5-a8e0-643062aea46c" />
 
-- 3 Datasets: PCA, Lasso/Ridge, Original Dataset
-- Algrothims:
-	- Baseline: Linear Regression (without feature selection);
+
+# Meeting notes - Dec.5th
+- Baseline models
+	- Linear Regression (without feature selection)
 	- Random Walk Model
-
- - Lasso regression
- - Random forest
- - AR(1)
- - ARIMA
+- Processing data
+  - 4 Datasets:
+  - PCA, Lasso, Elastic net,  Original Dataset
+- Advanced models
+ 	- Lasso regression
+ 	- Random forest
+ 	- Boosting (could check XGBoost, which is a version of boosting more useful for quant finance)
+ 	- ARIMA
+	 - Neural Network (?)
 
 ---
 # Meeting Notes - Dec. 4th
