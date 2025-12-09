@@ -3,6 +3,10 @@
 
 # Data Processing on EIA Weekly Variables
 
+## Key factors
+
+The four "surviving" variables finally screened out are mainly focused on PADD3 (Gulf Coast) refinery production indicators (PADD3_RefBl_NetProd_FinGas, Residual), net gasoline blending production, and Alaska crude oil inventories in transit (US_Crude_Stocks_Transit_from_AK). These variables can be regarded as key state indicators that drive changes in market structure.
+
 ## Design Highlights
 
 ### 1. Resolution Alignment to Mitigate Spurious Correlation
