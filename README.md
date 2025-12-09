@@ -30,10 +30,9 @@ Based on the empirical results from Schemes A, B, and C, the direct linear predi
 - The "Efficiency" Reality: This confirms that weekly EIA data (Inventories, Production) is likely "priced in" by the market long before the official release, or that the linear relationship is overwhelmed by high-frequency daily noise.
 ### Feature Selection Insights (The "Signal")
 
-Despite the poor predictive performance, the LASSO model was extremely discerning, reducing 406 features down to just 4. The surviving features are highly logical, validating the economic integrity of data:
+Based on the comparative performance across Schemes A, B, and C, Scheme A utilizing LASSO Regression is the optimal model choice. While all linear models struggled to predict the magnitude of weekly price changes (as evidenced by negative $R^2$ values), LASSO demonstrated superior capability in noise reduction and feature identification within a high-dimensional dataset ($p \gg n$).
 
-- US_Crude_Stocks_Transit_from_AK: This represents supply chain latency.
-
-- PADD3_RefBl_NetProd...: PADD3 (Gulf Coast) is the refining hub of the US. Its net production is the strongest proxy for real demand.
-
-- While these features cannot predict next week's price direction linearly, they likely define the Market Regime (e.g., "Supply Constraint" vs. "Oversupply").
+- **Model Performance**: Scheme A (LASSO) achieved the lowest Test MSE (19.65) and the highest relative $R^2$ (-0.0079), outperforming the cumulative trend prediction (Scheme B) and the binary classification model (Scheme C), which failed to select any features and achieved only 47% accuracy.
+- **Dimensionality Reduction**: Unlike Elastic Net, which retained an excessive 135 features (suggesting overfitting), LASSO successfully imposed sparsity, narrowing 406 input variables down to just 4 core features.
+- **Feature Interpretation**: The four selected variables possess strong economic logic, serving as proxies for Supply Chain Latency and Refining Demand. Specifically, PADD3 Refinery Net Production (Gasoline & Residual Fuel) and Alaska Transit Stocks represent physical constraints in the US oil market.
+- **Strategic Application**: Consequently, these 4 features should not be used as direct trading signals (due to the negative $R^2$), but rather as Regime Indicators or State Variables to adjust the risk exposure of a higher-frequency daily model.
