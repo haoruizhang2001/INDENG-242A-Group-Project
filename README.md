@@ -1,165 +1,39 @@
 
 <img width="352" height="188" alt="Gemini_Generated_Image_8ik9ws8ik9ws8ik9" src="https://github.com/user-attachments/assets/4a3bd7de-2753-4da5-a8e0-643062aea46c" />
 
+# Data Processing on EIA Weekly Variables
 
-# Meeting notes - Dec.5th
-- Baseline models
-	- Linear Regression (without feature selection)
-	- Random Walk Model
-- Processing data
-  - 4 Datasets:
-  - PCA, Lasso, Elastic net,  Original Dataset
-- Advanced models
- 	- Lasso regression
- 	- Random forest
- 	- Boosting (could check XGBoost, which is a version of boosting more useful for quant finance)
- 	- ARIMA
-	 - Neural Network (?)
+## Design Highlights
 
----
-# Meeting Notes - Dec. 4th
+### 1. Resolution Alignment to Mitigate Spurious Correlation
 
-11 a.m. Section Gathering
+To address the frequency mismatch between daily price action and weekly fundamental releases (EIA data), I rejected the common practice of naive forward-filling (up-sampling), which artificially inflates sample size ($N$) and induces severe serial correlation in the error term. Instead, I employed a pre-selection temporal aggregation strategy. By down-sampling the target variable to match the native weekly resolution of the covariates, I ensured that the feature selection algorithms (LASSO/Elastic Net) operated on statistically independent signals rather than autocorrelated noise, thereby preserving the integrity of the t-statistics and coefficient estimates.
 
-"If you can do the data pipeline plus one well-designed linear vs tree-based comparison with proper backtesting, you’ll already have a very strong project. Anything beyond that is a bonus."
+### 2. Preservation of Temporal Causality (Out-of-Sample Validity)
+Given the non-stationary nature of financial time series, standard $K$-fold cross-validation with random shuffling introduces significant look-ahead bias. My design enforces a strict chronological split (first 80% for training, subsequent 20% for testing). Furthermore, the standardization parameters ($\mu, \sigma$) were derived exclusively from the training window and applied forward to the test set. This ensures that the evaluation metrics ($MSE_{test}$, $R^2_{test}$) represent a mathematically honest estimate of the model's generalization error in a real-world forecasting micro-structure.
 
-Everyone works on their own ideas:
-- Wish: PCA vs. linear/feature selection by hand
-- Monthly frequencies v.s. daily frequencies
-- Baseline model
-- Forest
-  - Boosting
-- ARIMA
-- XGBoost???
-- Factors (based on the financial knowledge)
+### 3. Robustness via Target Specification Sensitivity 
+To differentiate between structural signal failure and target-specific noise, I designed a multi-horizon sensitivity analysis (Schemes A, B, and C). Rather than optimizing for a single metric, I tested the linear hypothesis across varying temporal lags (1-week vs. 2-week cumulative returns) and functional forms (continuous regression vs. binary classification). This approach isolates whether the explanatory power of fundamental variables decays over time or transforms into directional probability, providing a comprehensive audit of the linear relationship between supply/demand imbalances and price formation.
 
+### 4. Ensemble Feature Selection in High-Dimensional ($p > n$) Space
+Faced with a high-dimensional dataset ($p=406$) relative to a limited sample size ($n \approx 256$), coupled with inherent multicollinearity among inventory metrics, single-model selection is prone to instability. I implemented an Intersection-Based Selection Criterion. By retaining only the subset of features selected by both LASSO (which induces pure sparsity) and Elastic Net (which handles collinear grouping via the $L_2$ penalty), I filtered out mathematical artifacts. The resulting feature set represents the statistically robust "core drivers" that survive varying regularization topologies.
 
-  
+## Executive Summary
 
+Based on the empirical results from Schemes A, B, and C, the direct linear prediction of crude oil price movements using only weekly fundamental data is statistically ineffective. However, the feature selection process successfully isolated economically meaningful variables.
 
-# INDENG242A Group Project Outline
-Goal: comparative study of different ML methods in a specific area of the financial market
+### Performance Analysis (The "Null" Result)
+- Predictive Failure: Both Scheme A (Next-Week Return) and Scheme B (2-Week Cumulative) resulted in negative $R^2$ scores on the test set (LASSO: -0.0079, Elastic Net: -0.138). This indicates that a simple historical mean would have been a better predictor than the complex linear models.
 
-Possible subgoal: find a more nuanced algorithm for arbitrage/making profits, tailored towards the specific kind of market/futures/options/stock.
+- Classification Failure: Scheme C (Binary Direction) achieved an accuracy of only 47%, which is slightly worse than a random coin toss.
 
-Discussion we want to touch upon:
-1. Effectiveness of different ML methods
-2. Rethinking the performance metrics
-  	- Conjecture: high accuracy does not directly translate to good returns in portfolios sometimes
-3. Connect the model's findings with mathematical/financial principles.
-	- Conjecture: We are likely to discuss some rules derived by Boosting/RF and see how they can be connected with math principles. When some variables are extremely high, the previous criteria become ineffective.
-4. Application insights: data collection time v.s. quality
-   	- One interesting thing to do is to check if the low-quality/less precise/less sensitive data could bring up a fairly similar model with one based on a high-quality model.
+- The "Efficiency" Reality: This confirms that weekly EIA data (Inventories, Production) is likely "priced in" by the market long before the official release, or that the linear relationship is overwhelmed by high-frequency daily noise.
+### Feature Selection Insights (The "Signal")
 
+Despite the poor predictive performance, the LASSO model was extremely discerning, reducing 406 features down to just 4. The surviving features are highly logical, validating the economic integrity of data:
 
-## Markets Suggested
-- Oil Market (Crude oil CL=F)
-	- Structural, systematic, easy-to-understand, highly connected with macro-economy
-- Crypto
-	- Full of data sources, subject to sentiment and many other variables one could call
-- Beans/Corn (ZS, ZC)
-	- Extremely seasonal, can discuss stationarity/seasonality stuff
+- US_Crude_Stocks_Transit_from_AK: This represents supply chain latency.
 
-## Data sources
-- yfiance
-- quantnet
-- Binance API
-- Alphavantage
+- PADD3_RefBl_NetProd...: PADD3 (Gulf Coast) is the refining hub of the US. Its net production is the strongest proxy for real demand.
 
-
-### Tentative Research Plan
-
-#### Abstract
-This study aims to construct and compare systematic trading strategies for WTI Crude Oil (CL) futures. The research investigates whether non-linear machine learning models (XGBoost, LSTM) can generate superior risk-adjusted returns (Sharpe Ratio) compared to traditional linear benchmarks (Lasso Regression) by effectively integrating Term Structure signals with fundamental oil-market specific variables (Crack Spreads, Inventory Data, Macro-economic data).
-
-
-#### Target variables
-
-Essentially, we believe the majority of methods learnt in the course could be somewhat applied. As long as the predicted probabilities could be generated, the signals of buying/selling/holding could be set up through a certain numeric threshold, and furthermore, one could design nuanced strategies (Position sizing corresponding to the probabilities, for example)
-
-Therefore, we will try abusing the models to produce a binary variable such that
-$Y_{t} = 1$ if $\text{Return}_{t+5} > 0$ else $0$
-
-
-#### Models
-- Benchmark Model: Represents the traditional econometric approach, assuming linear relationships between fundamental factors and oil returns.
-  	- Simple linear regression
-  	- Lasso Regression.
-  	- ARIMA
-  	- Logistic regression
-- Funny Model: Attempts to find a high-dimensional space to separate the time period when going upwards and downwards.
-  	- KNN
-  	- SVM
-- Main Model (Tree-Based): Chosen for its ability to capture regime-switching behavior (e.g., "Inventory data matters more when Volatility is low").
-  	- Random Forest
-  	- Boosting (XGBoost specifically).
-- Challenger Model (We expect them to be more powerful, plus they have cool names):  (MLP?). Depends on our workload.
-  	- Neural Network
-  	- MLP
-	- LSTM
-
-
-
-#### Features
-There will be 4 big parts of features:
-1. Term Structure / Carry
-   - Roll yield
-   - Curve slope
-   - Curve curvature
-2. Oil fundamentals
-   - Crack spread ($P_{Gasoline} - P_{crude}$)
-   - Inventory Change (EIA Crude Oil Stocks Change, need forward fill)
-   - Open interest change ($\frac{OI_t - OI_{t-1}}{OI_{t-1}}$)
-3. Technical & Momentum
-   	- Time Series Momentum
-   	- Vol_Adjusted_Mom$\frac{\text{Return}}{\text{Volatility}}$
-   	- RSI
-   	- Basis Momentum
-4. Macro & Sentiment
-   	- DXY Return
-   	- US10Y
-   	- OVX
-
-There are definitely a lot more interesting and arguably reasonable data sources, but we also have to be wise about the price–performance ratio; if they are highly correlated with other variables, we definitely don't want to spend days wrangling data.
-
-While that also leads to another interesting question: would a proxy variable (correlating with a lot) outperform a more accurate/arguably more powerful, specific variable in the model?
-
-#### Backtesting
-- Walk-Forward Validation: Rolling window training (e.g., 3-year train, 1-year test) to prevent look-ahead bias.
-- Scenario analysis: Carefully select bullish/bearish time periods to prevent feeding models with overly optimistic/pessimistic information. 
-- Transaction Costs: Simulating realistic slippage and commission fees typical for retail/institutional futures trading.
-
-#### Performance metrics
-The model is not only about predictions, but it's more about profiting. That leads to 2 dimensions of metrics we have to check:
-1. Statistical / ML Metrics
-- Precision
-  	- Primary indicator: one doesn't have to capture every increase, but definitely needs to make a good shot when making the decisions. 
-- Accuracy
-  - Be careful about that, and we have to set a Benchmark Accuracy. If the stock market is in a bull scenario, blindly guessing a skyrocketing price will generate good accuracy.
-- Log-Loss
-  - High accuracy but low confidence is still not good. 
-- AUC-ROC
-2. Financial / Strategy Metrics
-- Risk-Adjusted Returns
-  - Sharpe Ratio
-  - Sortino Ratio
-  - Calmar Ratio
-- Absolute Risk
-  - Max Drawdown
-  - Volatility
-- Execution Metrics (advanced)
-  - Win Rate vs. Profit/Loss Ratio
-  - Turnover Rate
-
-#### Basic To-Do List
-
-1. Settle the market (the current structure of the tentative plan can be transferred into any market).
-2. Settle the time period (Different datasets have different units of time, and this may affect the quality of training)
-3. Collecting data 
-- Time-consuming work (each guy focuses on different stuff)
-- Need to be careful about the units of time
-- Could look up some interesting variables/ design some interesting variables (say, network variable across different sections of supply chain)
-4. Literature review on the application of ML to financial markets.
-  - Performance metrics?
-  - Which model works best in what situations?
-  - How to really apply them? How do they form the execution decisions, really?
+- While these features cannot predict next week's price direction linearly, they likely define the Market Regime (e.g., "Supply Constraint" vs. "Oversupply").
