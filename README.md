@@ -3,9 +3,20 @@
 
 # Data Processing on EIA Weekly Variables
 
-## Key factors
+## Basic results/ Key factors
 
+### Lasso (it beat the fancy elastic net!)
 The four "surviving" variables finally screened out are mainly focused on PADD3 (Gulf Coast) refinery production indicators (PADD3_RefBl_NetProd_FinGas, Residual), net gasoline blending production, and Alaska crude oil inventories in transit (US_Crude_Stocks_Transit_from_AK). These variables can be regarded as key state indicators that drive changes in market structure.
+
+### PCA
+It successfully compressed the information from your 406 weekly features into a much smaller set of uncorrelated components. 
+- 90% Variance Explained is achieved with just 43 components.
+- PC1 (First Component): Explains 26.73% of the total variance. This suggests there is a strong, single dominant factor driving a quarter of the variation in weekly metrics (likely a general "Market Activity" or "Inventory Level" factor).
+- The variance explained drops off quickly after the first few components, confirming that the dataset contains a lot of redundant information (multicollinearity) that PCA successfully consolidated.
+
+While PCA was excellent for compression, the analysis ultimately recommended LASSO over PCA for the final model. 
+- PCA components are abstract mathematical constructs ($Z_1, Z_2...$) that are hard to interpret economically. In contrast, LASSO selected 4 specific, interpretable features (like PADD3 Refinery Production and Alaska Transit Stocks).
+- Also, PCA confirmed that 406 features were highly correlated and reducible, but LASSO provided a more useful "Fundamental Narrative" for daily model integration.
 
 ## Design Highlights
 
@@ -32,6 +43,7 @@ Based on the empirical results from Schemes A, B, and C, the direct linear predi
 - Classification Failure: Scheme C (Binary Direction) achieved an accuracy of only 47%, which is slightly worse than a random coin toss.
 
 - The "Efficiency" Reality: This confirms that weekly EIA data (Inventories, Production) is likely "priced in" by the market long before the official release, or that the linear relationship is overwhelmed by high-frequency daily noise.
+  
 ### Feature Selection Insights (The "Signal")
 
 Based on the comparative performance across Schemes A, B, and C, Scheme A utilizing LASSO Regression is the optimal model choice. While all linear models struggled to predict the magnitude of weekly price changes (as evidenced by negative $R^2$ values), LASSO demonstrated superior capability in noise reduction and feature identification within a high-dimensional dataset ($p \gg n$).
