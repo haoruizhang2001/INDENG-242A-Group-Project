@@ -604,19 +604,3 @@ Calmar = Annual Return / |Max Drawdown|
 ```
 Max DD = min((Cumulative Return[t] / Peak[t] - 1) for all t)
 ```
-
----
-
-## References
-
-1. Optuna Documentation: https://optuna.org/
-2. XGBoost Documentation: https://xgboost.readthedocs.io/
-3. Walk-Forward Analysis: Prado, M. L. (2018). *Advances in Financial Machine Learning*
-4. Dynamic Thresholding: Chan, E. P. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale*
-
----
-
-**Document Version**: 1.0  
-**Last Updated**: 2024  
-**Author**: Advanced Model Analysis Team
-
