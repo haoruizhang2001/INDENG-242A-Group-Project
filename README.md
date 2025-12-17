@@ -13,7 +13,7 @@
  	- Lasso regression
  	- Random forest
  	- Boosting (could check XGBoost, which is a version of boosting more useful for quant finance)
- 	- ARIMA
+ 	- AR, MA, ARIMA
 	 - Neural Network (?)
 
 ---
