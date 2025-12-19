@@ -1,10 +1,6 @@
 """
 LSTM Neural Network Modeling for Crude Oil Price Prediction
 
-This script implements LSTM models with grid search hyperparameter tuning
-for predicting crude oil prices. Uses the same data preparation as 
-Time Series Modeling.ipynb.
-
 Features:
 - Grid search over multiple hyperparameters
 - Top 10 models selected for ensemble prediction
