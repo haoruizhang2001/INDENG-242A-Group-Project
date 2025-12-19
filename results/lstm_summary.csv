@@ -1,0 +1,8 @@
+Metric,Value
+Total Models Evaluated,216.0
+Top 10 Models Used,10.0
+Test Set Size,182.0
+Best Model RMSE,1.775326415749567
+Best Model R²,0.7643108585478032
+Ensemble RMSE,3.6469562695894884
+Ensemble R²,0.008215506318143051
