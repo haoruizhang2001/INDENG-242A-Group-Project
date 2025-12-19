@@ -498,25 +498,25 @@ print("\n" + "=" * 70)
 print("LSTM MODELING COMPLETE")
 print("=" * 70)
 
-print("\n📊 Best Model Configuration:")
+print("\nBest Model Configuration:")
 best_config = top_10_configs[0]
 for key, value in best_config.items():
     print(f"  {key}: {value}")
 
-print("\n📈 Top 10 Model Performance Summary:")
+print("\nTop 10 Model Performance Summary:")
 print(metrics_df[['model_name', 'test_rmse', 'test_r2']].to_string(index=False))
 
 ensemble_rmse = np.sqrt(mean_squared_error(y_actual_aligned, ensemble_pred))
 ensemble_r2 = r2_score(y_actual_aligned, ensemble_pred)
-print(f"\n🎯 Ensemble Prediction Performance:")
+print("\nEnsemble Prediction Performance:")
 print(f"  RMSE: {ensemble_rmse:.4f}")
 print(f"  R²: {ensemble_r2:.4f}")
 
-print("\n📁 Output Files:")
+print("\nOutput Files:")
 print(f"  1. {grid_search_path}")
 print(f"  2. {metrics_path}")
 print(f"  3. {predictions_path}")
 print(f"  4. {summary_path}")
 
-print("\n✅ All results exported successfully!")
+print("\nAll results exported successfully!")
 
