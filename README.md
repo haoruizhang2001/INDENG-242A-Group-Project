@@ -14,7 +14,7 @@
  	- Random forest
  	- Boosting (could check XGBoost, which is a version of boosting more useful for quant finance)
  	- AR, MA, ARIMA
-	 - Neural Network (?)
+	 - Neural Network 
 
 ---
 # Meeting Notes - Dec. 4th
@@ -30,7 +30,7 @@ Everyone works on their own ideas:
 - Forest
   - Boosting
 - ARIMA
-- XGBoost???
+- XGBoost
 - Factors (based on the financial knowledge)
 
 
